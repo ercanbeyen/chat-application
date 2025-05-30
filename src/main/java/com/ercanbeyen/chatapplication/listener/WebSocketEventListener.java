@@ -2,6 +2,7 @@ package com.ercanbeyen.chatapplication.listener;
 
 import com.ercanbeyen.chatapplication.constant.enums.MessageType;
 import com.ercanbeyen.chatapplication.model.ChatMessage;
+import com.ercanbeyen.chatapplication.util.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -33,11 +34,11 @@ public class WebSocketEventListener {
         log.info("Session Disconnect Event:: Session id: {}", event.getSessionId());
 
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String username = (String) headerAccessor.getSessionAttributes()
-                .get("username");
+        String username = (String) SessionUtil.getValueFromHeader(headerAccessor, "username");
 
         if (Optional.ofNullable(username).isPresent()) {
             log.info("User disconnected: {}", username);
+
             ChatMessage chatMessage = ChatMessage.builder()
                     .type(MessageType.LEAVE)
                     .sender(username)

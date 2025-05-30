@@ -1,6 +1,7 @@
 package com.ercanbeyen.chatapplication.controller;
 
 import com.ercanbeyen.chatapplication.model.ChatMessage;
+import com.ercanbeyen.chatapplication.util.SessionUtil;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -12,9 +13,7 @@ public class ChatController {
     @MessageMapping("/chat/addUser")
     @SendTo("/topic/public")
     public ChatMessage addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-        headerAccessor.getSessionAttributes()
-                .put("username", chatMessage.getSender());
-
+        SessionUtil.setValueToHeader(headerAccessor, "username", chatMessage.getSender());
         return chatMessage;
     }
 
