@@ -17,9 +17,7 @@ var colors = [
 ];
 
 function connect(event) {
-    username = document.querySelector('#name')
-        .value
-        .trim();
+    username = document.querySelector('#name').value.trim();
 
     if (username) {
         usernamePage.classList.add('hidden');
@@ -34,7 +32,6 @@ function connect(event) {
     event.preventDefault();
 }
 
-
 function onConnected() {
     stompClient.subscribe('/topic/public', onMessageReceived);
 
@@ -43,11 +40,9 @@ function onConnected() {
         type: 'JOIN'
     };
 
-    stompClient.send("/app/chat/addUser", {}, JSON.stringify(chatMessage));
-
+    stompClient.send("/app/chat/users", {}, JSON.stringify(chatMessage));
     connectingElement.classList.add('hidden');
 }
-
 
 function onError(error) {
     console.log(error);
@@ -56,8 +51,7 @@ function onError(error) {
 }
 
 function sendMessage(event) {
-    var messageContent = messageInput.value
-        .trim();
+    var messageContent = messageInput.value.trim();
 
     if (messageContent && stompClient) {
         var chatMessage = {
@@ -66,14 +60,12 @@ function sendMessage(event) {
             type: 'CHAT'
         };
 
-        stompClient.send("/app/chat/sendMessage", {}, JSON.stringify(chatMessage));
-
+        stompClient.send("/app/chat/messages", {}, JSON.stringify(chatMessage));
         messageInput.value = '';
     }
 
     event.preventDefault();
 }
-
 
 function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
@@ -112,7 +104,6 @@ function onMessageReceived(payload) {
 
     messageArea.scrollTop = messageArea.scrollHeight;
 }
-
 
 function getAvatarColor(messageSender) {
     var hash = 0;

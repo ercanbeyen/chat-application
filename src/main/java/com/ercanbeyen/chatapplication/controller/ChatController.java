@@ -10,14 +10,14 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class ChatController {
-    @MessageMapping("/chat/addUser")
+    @MessageMapping("/chat/users")
     @SendTo("/topic/public")
     public ChatMessage addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
         SessionUtil.setValueToHeader(headerAccessor, "username", chatMessage.getSender());
         return chatMessage;
     }
 
-    @MessageMapping("/chat/sendMessage")
+    @MessageMapping("/chat/messages")
     @SendTo("/topic/public")
     public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
         return chatMessage;
