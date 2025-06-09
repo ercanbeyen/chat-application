@@ -19,7 +19,7 @@ var colors = [
 function connect(event) {
     username = document.querySelector('#name').value.trim();
 
-    if (username) {
+    if (isUsernameValid(username)) {
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
 
@@ -30,6 +30,25 @@ function connect(event) {
     }
 
     event.preventDefault();
+}
+
+function isUsernameValid(username) {
+    console.log("Username: " + username);
+
+    if (!username) {
+        console.error("Empty or null username");
+        return false;
+    }
+
+    const MINIMUM_LENGTH_OF_USERNAME = 3;
+    const MAXIMUM_LENGTH_OF_USERNAME = 30;
+
+    if (username.length < MINIMUM_LENGTH_OF_USERNAME || username.length > MAXIMUM_LENGTH_OF_USERNAME) {
+        console.error("Invalid username lenght");
+        return false;
+    }
+
+    return true;
 }
 
 function onConnected() {
