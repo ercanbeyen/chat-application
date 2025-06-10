@@ -44,7 +44,7 @@ function isUsernameValid(username) {
     const MAXIMUM_LENGTH_OF_USERNAME = 30;
 
     if (username.length < MINIMUM_LENGTH_OF_USERNAME || username.length > MAXIMUM_LENGTH_OF_USERNAME) {
-        console.error("Invalid username lenght");
+        console.error("Invalid username length");
         return false;
     }
 
@@ -53,6 +53,7 @@ function isUsernameValid(username) {
 
 function onConnected() {
     stompClient.subscribe('/topic/public', onMessageReceived);
+    stompClient.subscribe('/topic/errors', onErrorReceived);
 
     var chatMessage = {
         sender: username,
@@ -64,7 +65,7 @@ function onConnected() {
 }
 
 function onError(error) {
-    console.log(error);
+    console.error(error);
     connectingElement.textContent = 'Failed to connect to server. Please refresh this page to try again!';
     connectingElement.style.color = 'red';
 }
@@ -84,6 +85,10 @@ function sendMessage(event) {
     }
 
     event.preventDefault();
+}
+
+function onErrorReceived(error) {
+    console.error("Error received from server: " + error);
 }
 
 function onMessageReceived(payload) {
