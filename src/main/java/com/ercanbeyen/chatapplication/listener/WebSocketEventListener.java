@@ -2,6 +2,7 @@ package com.ercanbeyen.chatapplication.listener;
 
 import com.ercanbeyen.chatapplication.constant.enums.MessageType;
 import com.ercanbeyen.chatapplication.model.ChatMessage;
+import com.ercanbeyen.chatapplication.service.ChatService;
 import com.ercanbeyen.chatapplication.util.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WebSocketEventListener {
     private final SimpMessageSendingOperations messagingTemplate;
+    private final ChatService chatService;
 
     @EventListener
     public void handleSessionConnectEvent(SessionConnectedEvent event) {
@@ -38,6 +40,8 @@ public class WebSocketEventListener {
 
         if (Optional.ofNullable(username).isPresent()) {
             log.info("User disconnected: {}", username);
+
+            chatService.removeUser(username);
 
             ChatMessage chatMessage = ChatMessage.builder()
                     .type(MessageType.LEAVE)

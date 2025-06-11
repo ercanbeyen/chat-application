@@ -1,27 +1,36 @@
 package com.ercanbeyen.chatapplication.service;
 
-import com.ercanbeyen.chatapplication.exception.BadRequestException;
+import com.ercanbeyen.chatapplication.constant.message.Logging;
+import com.ercanbeyen.chatapplication.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
 @Service
 public class ChatService {
-    public void checkUsername(String username) {
-        if (StringUtils.isBlank(username)) {
-            throw new BadRequestException("Empty or null username");
-        }
+    private final List<String> usersInChatroom = new LinkedList<>();
 
-        final int MINIMUM_LENGTH_OF_USERNAME = 3;
-        final int MAXIMUM_LENGTH_OF_USERNAME = 30;
+    public void addUser(String username) {
+        usersInChatroom.add(username);
+        log.info(Logging.USERS_IN_CHATROOM, usersInChatroom);
+    }
 
-        if (username.length() < MINIMUM_LENGTH_OF_USERNAME || username.length() > MAXIMUM_LENGTH_OF_USERNAME) {
-            throw new BadRequestException("Invalid username length");
-        }
+    public void removeUser(String username) {
+        usersInChatroom.stream()
+                .filter(userInChatroom -> userInChatroom.equals(username))
+                .findFirst()
+                .ifPresentOrElse(
+                        usersInChatroom::remove,
+                        () -> {
+                            log.error("User {} is not found", username);
+                            throw new NotFoundException("User is not found");
+                        });
 
-        log.info("Username is valid");
+        log.info(Logging.USERS_IN_CHATROOM, usersInChatroom);
     }
 }

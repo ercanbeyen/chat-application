@@ -3,6 +3,7 @@ package com.ercanbeyen.chatapplication.controller;
 import com.ercanbeyen.chatapplication.model.ChatMessage;
 import com.ercanbeyen.chatapplication.service.ChatService;
 import com.ercanbeyen.chatapplication.util.SessionUtil;
+import com.ercanbeyen.chatapplication.validaton.ChatValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -21,8 +22,12 @@ public class ChatController {
     @MessageMapping("/chat/users")
     @SendTo("/topic/public")
     public ChatMessage addUser(ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-        SessionUtil.setValueToHeader(headerAccessor, "username", chatMessage.getSender());
-        chatService.checkUsername(chatMessage.getSender());
+        String sender = chatMessage.getSender();
+
+        SessionUtil.setValueToHeader(headerAccessor, "username", sender);
+        ChatValidation.checkUsername(sender);
+        chatService.addUser(sender);
+
         return chatMessage;
     }
 
