@@ -3,12 +3,11 @@ package com.ercanbeyen.chatapplication.controller;
 import com.ercanbeyen.chatapplication.model.ChatMessage;
 import com.ercanbeyen.chatapplication.service.ChatService;
 import com.ercanbeyen.chatapplication.util.SessionUtil;
-import com.ercanbeyen.chatapplication.validaton.ChatValidation;
+import com.ercanbeyen.chatapplication.validation.ChatValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
@@ -33,7 +32,9 @@ public class ChatController {
 
     @MessageMapping("/chat/messages")
     @SendTo("/topic/public")
-    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
+    public ChatMessage sendMessage(ChatMessage chatMessage) {
+        ChatValidation.checkMessage(chatMessage);
+        chatService.checkUserInChatroom(chatMessage.getSender());
         return chatMessage;
     }
 

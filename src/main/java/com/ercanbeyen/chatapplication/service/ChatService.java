@@ -21,16 +21,19 @@ public class ChatService {
     }
 
     public void removeUser(String username) {
-        usersInChatroom.stream()
-                .filter(userInChatroom -> userInChatroom.equals(username))
-                .findFirst()
-                .ifPresentOrElse(
-                        usersInChatroom::remove,
-                        () -> {
-                            log.error("User {} is not found", username);
-                            throw new NotFoundException("User is not found");
-                        });
-
+        checkUserInChatroom(username);
+        usersInChatroom.remove(username);
         log.info(Logging.USERS_IN_CHATROOM, usersInChatroom);
+    }
+
+    public void checkUserInChatroom(String username) {
+        usersInChatroom.stream()
+                .parallel()
+                .filter(userInChatroom -> userInChatroom.equals(username))
+                .findAny()
+                .orElseThrow(() -> new NotFoundException("User is not found"));
+
+        log.info("User {} is found", username);
+
     }
 }
