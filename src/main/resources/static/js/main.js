@@ -16,6 +16,12 @@ var colors = [
     '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
 ];
 
+const MessageType = Object.freeze({
+    JOIN: "JOIN",
+    CHAT: "CHAT",
+    LEAVE: "LEAVE"
+});
+
 function connect(event) {
     username = document.querySelector('#name').value.trim();
 
@@ -57,7 +63,7 @@ function onConnected() {
 
     var chatMessage = {
         sender: username,
-        type: 'JOIN'
+        type: MessageType.JOIN
     };
 
     stompClient.send("/app/chat/users", {}, JSON.stringify(chatMessage));
@@ -77,7 +83,7 @@ function sendMessage(event) {
         var chatMessage = {
             sender: username,
             content: messageInput.value,
-            type: 'CHAT'
+            type: MessageType.CHAT
         };
 
         stompClient.send("/app/chat/messages", {}, JSON.stringify(chatMessage));
@@ -88,17 +94,17 @@ function sendMessage(event) {
 }
 
 function onErrorReceived(error) {
-    console.error("Error received from server: " + error);
+    console.error("Error received from the server: " + error);
 }
 
 function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
     var messageElement = document.createElement('li');
 
-    if (message.type === 'JOIN') {
+    if (message.type === MessageType.JOIN) {
         messageElement.classList.add('event-message');
         message.content = message.sender + ' joined!';
-    } else if (message.type === 'LEAVE') {
+    } else if (message.type === MessageType.LEAVE) {
         messageElement.classList.add('event-message');
         message.content = message.sender + ' left!';
     } else {
