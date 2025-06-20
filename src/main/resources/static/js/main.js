@@ -29,7 +29,7 @@ function connect(event) {
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
 
-        var socket = new SockJS('/ws');
+        let socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, onConnected, onError);
@@ -61,7 +61,7 @@ function onConnected() {
     stompClient.subscribe('/topic/public', onMessageReceived);
     stompClient.subscribe('/topic/errors', onErrorReceived);
 
-    var chatMessage = {
+    let chatMessage = {
         sender: username,
         type: MessageType.JOIN
     };
@@ -77,10 +77,10 @@ function onError(error) {
 }
 
 function sendMessage(event) {
-    var messageContent = messageInput.value.trim();
+    let messageContent = messageInput.value.trim();
 
     if (messageContent && stompClient) {
-        var chatMessage = {
+        let chatMessage = {
             sender: username,
             content: messageInput.value,
             type: MessageType.CHAT
@@ -98,51 +98,64 @@ function onErrorReceived(error) {
 }
 
 function onMessageReceived(payload) {
-    var message = JSON.parse(payload.body);
-    var messageElement = document.createElement('li');
+    let message = JSON.parse(payload.body);
+    let messageElement = document.createElement('li');
 
-    if (message.type === MessageType.JOIN) {
-        messageElement.classList.add('event-message');
-        message.content = message.sender + ' joined!';
-    } else if (message.type === MessageType.LEAVE) {
-        messageElement.classList.add('event-message');
-        message.content = message.sender + ' left!';
-    } else {
-        messageElement.classList.add('chat-message');
+    try {
+        let messageType = message.type;
+        console.log("Message type: " + messageType);
 
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(message.sender[0]);
+        switch (messageType) {
+            case MessageType.JOIN:
+                messageElement.classList.add('event-message');
+                message.content = message.sender + ' joined!';
+                break;
+            case MessageType.LEAVE:
+                messageElement.classList.add('event-message');
+                message.content = message.sender + ' left!';
+                break;
+            case MessageType.CHAT:
+                messageElement.classList.add('chat-message');
 
-        avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = getAvatarColor(message.sender);
+                let avatarElement = document.createElement('i');
+                let avatarText = document.createTextNode(message.sender[0]);
 
-        messageElement.appendChild(avatarElement);
+                avatarElement.appendChild(avatarText);
+                avatarElement.style['background-color'] = getAvatarColor(message.sender);
 
-        var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(message.sender);
+                messageElement.appendChild(avatarElement);
+
+                let usernameElement = document.createElement('span');
+                let usernameText = document.createTextNode(message.sender);
+                
+                usernameElement.appendChild(usernameText);
+                messageElement.appendChild(usernameElement);
+                break;
+            default:
+                throw new Error("Unknown message type");
+        }
+
+        let textElement = document.createElement('p');
+        let messageText = document.createTextNode(message.content);
         
-        usernameElement.appendChild(usernameText);
-        messageElement.appendChild(usernameElement);
+        textElement.appendChild(messageText);
+        messageElement.appendChild(textElement);
+        messageArea.appendChild(messageElement);
+
+        messageArea.scrollTop = messageArea.scrollHeight;    
+    } catch (error) {
+        console.error("Error caught: " + error);
     }
-
-    var textElement = document.createElement('p');
-    var messageText = document.createTextNode(message.content);
-    
-    textElement.appendChild(messageText);
-    messageElement.appendChild(textElement);
-    messageArea.appendChild(messageElement);
-
-    messageArea.scrollTop = messageArea.scrollHeight;
 }
 
 function getAvatarColor(messageSender) {
-    var hash = 0;
+    let hash = 0;
 
-    for (var i = 0; i < messageSender.length; i++) {
+    for (let i = 0; i < messageSender.length; i++) {
         hash = 31 * hash + messageSender.charCodeAt(i);
     }
 
-    var index = Math.abs(hash % colors.length);
+    let index = Math.abs(hash % colors.length);
 
     return colors[index];
 }
