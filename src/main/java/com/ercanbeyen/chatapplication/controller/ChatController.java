@@ -11,12 +11,16 @@ import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
 @Controller
 public class ChatController {
+    private final SimpMessageSendingOperations messageSendingOperations;
     private final ChatService chatService;
 
     @MessageMapping("/chat/users")
@@ -26,6 +30,9 @@ public class ChatController {
 
         SessionUtil.setValueToHeader(headerAccessor, "username", sender);
         chatService.addUser(sender);
+
+        List<String> usersInChatroom = chatService.getUsersInChatroom();
+        usersInChatroom.forEach(sendUser -> messageSendingOperations.convertAndSend("/topic/users", usersInChatroom));
 
         return chatMessage;
     }

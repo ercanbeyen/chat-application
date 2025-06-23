@@ -16,17 +16,20 @@ import java.util.List;
 public class ChatServiceImpl implements ChatService {
     private final List<String> usersInChatroom = new LinkedList<>();
 
+    @Override
     public void addUser(String username) {
         usersInChatroom.add(username);
         log.info(Logging.USERS_IN_CHATROOM, usersInChatroom);
     }
 
+    @Override
     public void removeUser(String username) {
         checkUserInChatroom(username);
         usersInChatroom.remove(username);
         log.info(Logging.USERS_IN_CHATROOM, usersInChatroom);
     }
 
+    @Override
     public void checkUserInChatroom(String username) {
         usersInChatroom.stream()
                 .parallel()
@@ -36,5 +39,10 @@ public class ChatServiceImpl implements ChatService {
 
         log.info("User {} is found", username);
 
+    }
+
+    @Override
+    public List<String> getUsersInChatroom() {
+        return usersInChatroom;
     }
 }

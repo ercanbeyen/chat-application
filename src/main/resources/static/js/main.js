@@ -10,6 +10,8 @@ var connectingElement = document.querySelector('.connecting');
 
 var stompClient = null;
 var username = null;
+var members = document.getElementById('memberslist');
+var users = document.getElementById('userslist');
 
 var colors = [
     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
@@ -21,6 +23,9 @@ const MessageType = Object.freeze({
     CHAT: "CHAT",
     LEAVE: "LEAVE"
 });
+
+const MINIMUM_LENGTH_OF_USERNAME = 3;
+const MAXIMUM_LENGTH_OF_USERNAME = 30;
 
 function connect(event) {
     username = document.querySelector('#name').value.trim();
@@ -46,9 +51,6 @@ function isUsernameValid(username) {
         return false;
     }
 
-    const MINIMUM_LENGTH_OF_USERNAME = 3;
-    const MAXIMUM_LENGTH_OF_USERNAME = 30;
-
     if (username.length < MINIMUM_LENGTH_OF_USERNAME || username.length > MAXIMUM_LENGTH_OF_USERNAME) {
         console.error("Invalid username length");
         return false;
@@ -60,6 +62,10 @@ function isUsernameValid(username) {
 function onConnected() {
     stompClient.subscribe('/topic/public', onMessageReceived);
     stompClient.subscribe('/topic/errors', onErrorReceived);
+    stompClient.subscribe('/topic/users', (usersList) => {
+        console.log("UsersList: " + usersList);
+        showUsers(JSON.parse(usersList.body))
+    });
 
     let chatMessage = {
         sender: username,
@@ -67,6 +73,7 @@ function onConnected() {
     };
 
     stompClient.send("/app/chat/users", {}, JSON.stringify(chatMessage));
+
     connectingElement.classList.add('hidden');
 }
 
@@ -162,3 +169,15 @@ function getAvatarColor(messageSender) {
 
 usernameForm.addEventListener('submit', connect, true)
 messageForm.addEventListener('submit', sendMessage, true)
+
+function showUsers(connectedUsers) {
+    let numberOfConnectedUsers = connectedUsers.length;
+
+    users.innerHTML = "<li>Number of users: " +  numberOfConnectedUsers + "</li>";
+
+    for (let i = 0; i < connectedUsers.length; i++) {
+        users.innerHTML += "<li>" + connectedUsers[i] + "</li>";
+    }
+
+    members.scrollTop = members.scrollHeight;
+}

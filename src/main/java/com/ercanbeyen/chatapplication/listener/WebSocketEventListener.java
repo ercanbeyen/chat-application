@@ -13,13 +13,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class WebSocketEventListener {
-    private final SimpMessageSendingOperations messagingTemplate;
+    private final SimpMessageSendingOperations messageSendingOperations;
     private final ChatService chatService;
 
     @EventListener
@@ -48,7 +49,10 @@ public class WebSocketEventListener {
                     .sender(username)
                     .build();
 
-            messagingTemplate.convertAndSend("/topic/public", chatMessage);
+            List<String> usersInChatroom = chatService.getUsersInChatroom();
+            usersInChatroom.forEach(sendUser -> messageSendingOperations.convertAndSend("/topic/users", usersInChatroom));
+
+            messageSendingOperations.convertAndSend("/topic/public", chatMessage);
         }
     }
 }
