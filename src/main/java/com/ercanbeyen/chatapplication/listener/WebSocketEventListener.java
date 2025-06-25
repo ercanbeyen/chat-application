@@ -1,26 +1,25 @@
 package com.ercanbeyen.chatapplication.listener;
 
 import com.ercanbeyen.chatapplication.constant.enums.MessageType;
+import com.ercanbeyen.chatapplication.helper.MessageSenderHelper;
 import com.ercanbeyen.chatapplication.model.ChatMessage;
 import com.ercanbeyen.chatapplication.service.ChatService;
 import com.ercanbeyen.chatapplication.util.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.util.List;
 import java.util.Optional;
 
-@Component
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class WebSocketEventListener {
-    private final SimpMessageSendingOperations messageSendingOperations;
+    private final MessageSenderHelper messageSenderHelper;
     private final ChatService chatService;
 
     @EventListener
@@ -49,10 +48,8 @@ public class WebSocketEventListener {
                     .sender(username)
                     .build();
 
-            List<String> usersInChatroom = chatService.getUsersInChatroom();
-            usersInChatroom.forEach(sendUser -> messageSendingOperations.convertAndSend("/topic/users", usersInChatroom));
-
-            messageSendingOperations.convertAndSend("/topic/public", chatMessage);
+            messageSenderHelper.showUsers();
+            messageSenderHelper.sendMessage(chatMessage);
         }
     }
 }
