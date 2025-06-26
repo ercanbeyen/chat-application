@@ -173,7 +173,7 @@ messageForm.addEventListener('submit', sendMessage, true)
 function showUsers(connectedUsers) {
     let numberOfConnectedUsers = connectedUsers.length;
 
-    users.innerHTML = "<li>Number of users: " +  numberOfConnectedUsers + "</li>";
+    users.innerHTML = "<li><b>Number of users: " +  numberOfConnectedUsers + "</b></li>";
 
     for (let i = 0; i < connectedUsers.length; i++) {
         users.innerHTML += "<li>" + connectedUsers[i] + "</li>";
