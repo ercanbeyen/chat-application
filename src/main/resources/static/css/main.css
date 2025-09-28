@@ -105,6 +105,10 @@ button.accent:hover {
     color: #fff;
 }
 
+#about-page {
+    text-align: center;
+}
+
 #username-page {
     text-align: center;
 }
@@ -133,6 +137,24 @@ button.accent:hover {
     margin-top: 10px;
 }
 
+#username-page p {
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
+    font-size: 20px;
+}
+
+a:visited {
+    color: orange
+}
+
+a:hover {
+    color: blue;
+}
+
+a:active {
+    color: red;
+}
 
 #chat-page {
     position: relative;
