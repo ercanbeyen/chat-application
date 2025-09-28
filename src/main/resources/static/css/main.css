@@ -139,9 +139,13 @@ button.accent:hover {
 
 #username-page p {
     position: absolute;
-    bottom: 8px;
-    right: 16px;
+    top: 90%;
+    width: 100%;
     font-size: 20px;
+}
+
+a:link {
+    color: brown;
 }
 
 a:visited {
