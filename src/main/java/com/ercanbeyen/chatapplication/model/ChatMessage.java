@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,4 +21,5 @@ public class ChatMessage {
     @NotBlank(message = "Sender is mandatory")
     @Size(min = 3, max = 30, message = "Length of sender should be between {min} and {max}")
     private String sender;
+    private LocalDateTime sendDate;
 }

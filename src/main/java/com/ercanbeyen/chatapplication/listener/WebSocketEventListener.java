@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
@@ -46,6 +47,7 @@ public class WebSocketEventListener {
             ChatMessage chatMessage = ChatMessage.builder()
                     .type(MessageType.LEAVE)
                     .sender(username)
+                    .sendDate(LocalDateTime.now())
                     .build();
 
             messageSenderHelper.showUsers();

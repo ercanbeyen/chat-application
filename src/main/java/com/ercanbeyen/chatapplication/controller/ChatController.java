@@ -13,6 +13,8 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Slf4j
 @Controller
@@ -27,6 +29,7 @@ public class ChatController {
 
         SessionUtil.setValueToHeader(headerAccessor, "username", sender);
         chatService.addUser(sender);
+        message.setSendDate(LocalDateTime.now());
         messageSenderHelper.showUsers();
 
         return message;
@@ -37,6 +40,7 @@ public class ChatController {
     public ChatMessage sendMessage(@Valid ChatMessage message) {
         ChatValidation.checkMessage(message);
         chatService.checkUserInChatroom(message.getSender());
+        message.setSendDate(LocalDateTime.now());
         return message;
     }
 }

@@ -62,10 +62,7 @@ function isUsernameValid(username) {
 function onConnected() {
     stompClient.subscribe('/topic/public', onMessageReceived);
     stompClient.subscribe('/topic/errors', onErrorReceived);
-    stompClient.subscribe('/topic/users', (usersList) => {
-        console.log("UsersList: " + usersList);
-        showUsers(JSON.parse(usersList.body))
-    });
+    stompClient.subscribe('/topic/users', (connectedUsersData) => showUsers(JSON.parse(connectedUsersData.body)));
 
     let chatMessage = {
         sender: username,
@@ -110,7 +107,9 @@ function onMessageReceived(payload) {
 
     try {
         let messageType = message.type;
+        let sendDate = message.sendDate;
         console.log("Message type: " + messageType);
+        console.log("Send date: " + message.sendDate);
 
         switch (messageType) {
             case MessageType.JOIN:
@@ -137,6 +136,7 @@ function onMessageReceived(payload) {
                 
                 usernameElement.appendChild(usernameText);
                 messageElement.appendChild(usernameElement);
+
                 break;
             default:
                 throw new Error("Unknown message type");
@@ -145,8 +145,15 @@ function onMessageReceived(payload) {
         let textElement = document.createElement('p');
         let messageText = document.createTextNode(message.content);
         
+        let sendDateElement = document.createElement('p');
+        let sendDateText = document.createTextNode(sendDate);
+        
         textElement.appendChild(messageText);
         messageElement.appendChild(textElement);
+        
+        sendDateElement.appendChild(sendDateText);
+        messageElement.appendChild(sendDateElement);
+        
         messageArea.appendChild(messageElement);
 
         messageArea.scrollTop = messageArea.scrollHeight;    
@@ -167,17 +174,17 @@ function getAvatarColor(messageSender) {
     return colors[index];
 }
 
-usernameForm.addEventListener('submit', connect, true)
-messageForm.addEventListener('submit', sendMessage, true)
-
 function showUsers(connectedUsers) {
     let numberOfConnectedUsers = connectedUsers.length;
 
     users.innerHTML = "<li><b>Number of users: " +  numberOfConnectedUsers + "</b></li>";
 
-    for (let i = 0; i < connectedUsers.length; i++) {
+    for (let i = 0; i < numberOfConnectedUsers; i++) {
         users.innerHTML += "<li>" + connectedUsers[i] + "</li>";
     }
 
     members.scrollTop = members.scrollHeight;
 }
+
+usernameForm.addEventListener('submit', connect, true)
+messageForm.addEventListener('submit', sendMessage, true)
