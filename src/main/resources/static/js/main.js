@@ -106,33 +106,33 @@ function onMessageReceived(payload) {
     let messageElement = document.createElement('li');
 
     try {
+        let sender = message.sender;
         let messageType = message.type;
         let sendDate = message.sendDate;
-        console.log("Message type: " + messageType);
-        console.log("Send date: " + message.sendDate);
+        let content = message.content;
 
         switch (messageType) {
             case MessageType.JOIN:
                 messageElement.classList.add('event-message');
-                message.content = message.sender + ' joined!';
+                content = sender + ' joined!';
                 break;
             case MessageType.LEAVE:
                 messageElement.classList.add('event-message');
-                message.content = message.sender + ' left!';
+                content = sender + ' left!';
                 break;
             case MessageType.CHAT:
                 messageElement.classList.add('chat-message');
 
                 let avatarElement = document.createElement('i');
-                let avatarText = document.createTextNode(message.sender[0]);
+                let avatarText = document.createTextNode(sender[0]);
 
                 avatarElement.appendChild(avatarText);
-                avatarElement.style['background-color'] = getAvatarColor(message.sender);
+                avatarElement.style['background-color'] = getAvatarColor(sender);
 
                 messageElement.appendChild(avatarElement);
 
                 let usernameElement = document.createElement('span');
-                let usernameText = document.createTextNode(message.sender);
+                let usernameText = document.createTextNode(sender);
                 
                 usernameElement.appendChild(usernameText);
                 messageElement.appendChild(usernameElement);
@@ -143,9 +143,9 @@ function onMessageReceived(payload) {
         }
 
         let textElement = document.createElement('p');
-        let messageText = document.createTextNode(message.content);
+        let messageText = document.createTextNode(content);
         
-        let sendDateElement = document.createElement('p');
+        let sendDateElement = document.createElement('small');
         let sendDateText = document.createTextNode(sendDate);
         
         textElement.appendChild(messageText);

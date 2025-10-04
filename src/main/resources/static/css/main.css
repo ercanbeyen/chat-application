@@ -21,6 +21,10 @@ body {
     height: 100%;
 }
 
+footer p {
+    text-align: center;
+}
+
 .clearfix:after {
     display: block;
     content: "";
@@ -243,6 +247,21 @@ a:active {
 
 #chat-page .chat-message p {
     color: #43464b;
+    word-wrap: break-word;
+}
+
+#chat-page .event-message small {
+    color: #777;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+}
+
+#chat-page .chat-message small {
+    color: #777;
+    position: absolute;
+    bottom: 0px;
+    right: 16px;
 }
 
 #messageForm .input-group input {
